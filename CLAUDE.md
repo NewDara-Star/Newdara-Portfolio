@@ -17,8 +17,11 @@ thin bar, masonry of images, captions on hover. Each tile opens a page built
    the site must work on plain Apache hosting as well as Vercel.
 4. Content on a page is factual. A claim about a project must be true of the
    shipped thing; delete anything that isn't.
-5. Registry `status: "sketch"` = on the wall as a tinted blank tile, no link.
-   Promote to `"live"` only with a cover and a page.
+5. Registry `status: "sketch"` = a tinted blank tile, no link. Promote to
+   `"live"` only with a cover and a page.
+6. `SHOW_UNBUILT` in the registry gates cover-only and sketch tiles. It is
+   FALSE while the site is public — a tile that does not open is a dead end.
+   Flip it to true to see the full wall as a to-do list. Nothing is deleted.
 
 ## Build
 - `npm run dev` — local.

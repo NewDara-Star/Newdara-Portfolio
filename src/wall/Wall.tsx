@@ -22,7 +22,7 @@
 // project (portfolio/TYPE-BRIEF.md).
 
 import { useState } from "react";
-import { projects } from "../projects";
+import { wallProjects } from "../projects";
 import { Tile } from "./Tile";
 import { Monogram } from "./mark";
 import { Wordmark } from "./wordmark";
@@ -70,7 +70,7 @@ export function Wall() {
         </h1>
         <div className="rail" aria-hidden="true" />
         <div className="masonry" aria-label="Work">
-          {projects.map((p, i) => (
+          {wallProjects.map((p, i) => (
             <Tile key={p.meta.slug} meta={p.meta} hasPage={!!p.Page} n={i + 1} />
           ))}
         </div>

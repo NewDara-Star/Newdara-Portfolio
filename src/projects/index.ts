@@ -62,7 +62,10 @@ export const projects: Project[] = [
   { meta: eflMeta },
   { meta: northodoxMeta },
   { meta: kolorsMeta },
-  { meta: scatteredthoughtsMeta },
+  {
+    meta: scatteredthoughtsMeta,
+    Page: lazy(() => import("./scattered-thoughts/ScatteredThoughtsPage")),
+  },
   { meta: socialMeta },
 
   // -- Sketches: no assets yet. On the wall as intent. ---------------------
@@ -79,6 +82,21 @@ export const projects: Project[] = [
     },
   },
 ];
+
+// ---------------------------------------------------------------------------
+// What the wall actually hangs.
+//
+// A tile with a cover but no Page is a dead end: someone clicks it and nothing
+// happens. That is fine while the site is private and the wall is a to-do
+// list; it is not fine once the URL is out. So while SHOW_UNBUILT is false the
+// wall hangs only projects that open. Nothing is deleted — flip this to true
+// and every cover and sketch is back.
+// ---------------------------------------------------------------------------
+export const SHOW_UNBUILT = false;
+
+export const wallProjects = SHOW_UNBUILT
+  ? projects
+  : projects.filter((p) => p.Page);
 
 export const bySlug = (slug: string) =>
   projects.find((p) => p.meta.slug === slug);
