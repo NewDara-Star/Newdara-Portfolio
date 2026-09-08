@@ -21,7 +21,7 @@
 --------------------------------------------------------------------------- */
 
 :root {
-  --ground: #ffffff;
+  --ground: #FFFEFF;                /* not pure white — a hair of magenta */
   --ink: #111111;
   --ink-soft: #767676;
   --rule: #dddddd;
@@ -39,6 +39,7 @@
 html { background: var(--ground); font-size: 62.5%; }
 body {
   margin: 0;
+  background: var(--ground);
   color: var(--ink);
   font: 400 1.7rem/1.5 var(--sans);
   -webkit-font-smoothing: antialiased;
@@ -50,8 +51,14 @@ body {
 .bar {
   display: flex; align-items: center; gap: 3.2rem;
   padding: 2.8rem 0 0;
+  position: sticky; top: 0; z-index: 40; background: var(--ground);
 }
-.bar-mark { display: block; color: var(--ink); line-height: 0; }
+.bar-mark {
+  display: block; color: var(--ink); line-height: 0;
+  opacity: 0; pointer-events: none; transform: translateY(-5px);
+  transition: opacity .2s linear, transform .2s cubic-bezier(.2,.7,.2,1);
+}
+.wall.is-scrolled .bar-mark { opacity: 1; pointer-events: auto; transform: translateY(0); }
 .bar-mark svg { width: 2.6rem; height: auto; display: block; }
 .bar-mark:hover { color: var(--red); }
 .bar-nav { display: flex; gap: 2.8rem; margin-right: auto; }
@@ -77,11 +84,11 @@ body {
 .about p { margin: 0 0 1.2rem; }
 .about p:first-child { font-weight: 500; }
 
-/* --- title over the grid ----------------------------------------------------
-   The title is the NewDara wordmark, outlined. It is sized by WIDTH, not
-   font-size, because it is a drawing. --wm-ar is its aspect ratio (4036/862);
-   the grid's top padding is computed from the resulting height so the first
-   row of tiles still runs under the mark, as Miyazaki's title does. */
+/* --- masthead + the opening -------------------------------------------------
+   The mark is sized by WIDTH, not font-size, because it is a drawing.
+   --wm-ar is its aspect ratio; the grid's top padding is computed from the
+   resulting height. The opening transform is set by Masthead.tsx on the
+   .site-title itself — one element, no clone. */
 .grid-wrap {
   --wm-w: clamp(23rem, 56vw, 64rem);
   --wm-ar: 4.681;
@@ -90,15 +97,54 @@ body {
   padding-top: calc(3.6rem + var(--wm-h) + 3.4rem + 1rem);
 }
 .site-title {
-  position: absolute; top: 3.6rem; left: 0; z-index: 2;
+  position: absolute; top: 3.6rem; left: 0; z-index: 30;
   margin: 0; pointer-events: none;
   display: flex; flex-direction: column; gap: 1.2rem;
   width: var(--wm-w);
+  transform-origin: left top;
+  will-change: transform;
 }
-.site-wm { display: block; width: 100%; height: auto; color: var(--ink); }
+/* Once scrolled the mark is gone and the bar's monogram stands in for it. */
+.wall.is-scrolled .site-title { opacity: 0; transition: opacity .18s linear; }
+
+/* font-size is set inline by Masthead.tsx: the target width divided by the
+   mark's own width in slot-em, so the drawing always fills --wm-w exactly.
+   Tracking is a negative margin between slots — letter-spacing does nothing
+   between flex items. */
+.site-wm { display: flex; align-items: baseline; color: var(--ink); line-height: 1; }
+/* Each slot is exactly its final glyph's advance, so a flip never reflows. */
+.slot { position: relative; display: block; flex: none; height: 1em; overflow: hidden; }
+.slot-plain, .slot-glyph { position: absolute; inset: 0; display: block; }
+.slot-plain {
+  font: 400 .58em/1 var(--sans);
+  text-align: center; letter-spacing: 0;
+  transform: translateY(0);
+  transition: transform .34s cubic-bezier(.4,0,.15,1);
+}
+.slot-glyph { transform: translateY(105%); transition: transform .34s cubic-bezier(.4,0,.15,1); }
+.slot-glyph svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.slot-glyph path { fill: currentColor; }
+.slot[data-flipped] .slot-plain { transform: translateY(-105%); }
+.slot[data-flipped] .slot-glyph { transform: translateY(0); }
+
 .site-name {
   font: 500 1.3rem/1 var(--sans); text-transform: uppercase;
   letter-spacing: .22em; color: var(--ink-soft);
+  opacity: 0; transform: translateY(6px);
+  transition: opacity .3s linear, transform .3s cubic-bezier(.2,.7,.2,1);
+}
+.site-name.on { opacity: 1; transform: translateY(0); }
+
+/* Paper over the wall until the mark has landed. */
+.veil {
+  position: fixed; inset: 0; z-index: 25; background: var(--ground);
+  pointer-events: none; opacity: 1; transition: opacity .55s linear;
+}
+.wall.is-open .veil { opacity: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .slot-plain, .slot-glyph, .site-name, .veil, .site-title { transition: none; }
+  .veil { display: none; }
 }
 
 /* --- the picture rail ------------------------------------------------------
@@ -179,7 +225,7 @@ body {
 /* --- shared "back" pill every project page renders -------------------------- */
 .back-to-wall {
   position: fixed; left: 1.4rem; top: 1.4rem; z-index: 50;
-  background: var(--ink); color: #fff;
+  background: var(--ink); color: var(--ground);
   font: 600 1.4rem/1 var(--display); letter-spacing: .06em; text-transform: uppercase;
   padding: .8rem 1.2rem; text-decoration: none;
 }

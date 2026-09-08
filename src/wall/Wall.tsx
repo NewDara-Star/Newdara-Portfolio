@@ -21,21 +21,34 @@
 // face being cut for this site lands. See the type brief in the Life OS
 // project (portfolio/TYPE-BRIEF.md).
 
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { wallProjects } from "../projects";
 import { Tile } from "./Tile";
 import { Monogram } from "./mark";
-import { Wordmark } from "./wordmark";
+import { Masthead } from "./Masthead";
 import "@fontsource-variable/archivo";
 import "./wall.css";
 
 export function Wall() {
   const [about, setAbout] = useState(false);
+  const [opened, setOpened] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  // The bar's monogram and the masthead are never both present: the monogram
+  // is what stands in for the mark once the wordmark has scrolled away.
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 90);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const onDone = useCallback(() => setOpened(true), []);
 
   return (
-    <div className="wall">
+    <div className={"wall" + (opened ? " is-open" : "") + (scrolled ? " is-scrolled" : "")}>
       <header className="bar">
-        <a className="bar-mark" href="/" aria-label="NewDara — home">
+        <a className="bar-mark" href="/" aria-label="NewDara — home" tabIndex={scrolled ? 0 : -1}>
           <Monogram />
         </a>
         <nav className="bar-nav" aria-label="Site">
@@ -61,13 +74,10 @@ export function Wall() {
       </section>
 
       <main className="grid-wrap">
-        {/* The mark hangs over the first row, the way Miyazaki's huge title
-            does. The practice name is the mark; the person's name sits under
-            it, because people hire the person, not the practice. */}
-        <h1 className="site-title">
-          <Wordmark className="site-wm" />
-          <span className="site-name">Daramola Olumide</span>
-        </h1>
+        {/* The mark and its opening. See Masthead.tsx — it starts centred
+            and travels here. The practice name is the mark; the person's name
+            sits under it, because people hire the person, not the practice. */}
+        <Masthead onDone={onDone} />
         <div className="rail" aria-hidden="true" />
         <div className="masonry" aria-label="Work">
           {wallProjects.map((p, i) => (
@@ -75,6 +85,9 @@ export function Wall() {
           ))}
         </div>
       </main>
+
+      {/* Paper over the wall until the mark has landed. */}
+      <div className="veil" aria-hidden="true" />
 
       <footer className="foot">
         <span className="foot-mark"><Monogram /></span>
