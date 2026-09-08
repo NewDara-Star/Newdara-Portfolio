@@ -1,0 +1,186 @@
+/* ---------------------------------------------------------------------------
+   THE WALL.
+
+   Miyazaki's structure, Daramola's voice. What is kept from Anders Norén's
+   Miyazaki 2.2: white ground, 62.5% root so 1rem = 10px, a display face used
+   at line-height ~.95 for every heading, a site title far larger than anything
+   else that overlaps the grid, a masonry with the label BELOW the image.
+
+   What is his:
+     · the NewDara wordmark as the site title — seven faces, outlined
+     · the ND monogram in the bar and the footer (his own drawn outline)
+     · the frame device — an ink rule offset up and right, closing on hover.
+       Lifted from his Scattered Thoughts bubble and his NewDara price list.
+     · numbered gallery plaques instead of hover captions
+     · the picture rail the first row hangs from
+     · #F9423A — he used this exact value in price listing.ai in 2021. It only
+       looks borrowed.
+
+   Nothing here takes a project's colour except a sketch tile's faint tint.
+   That restraint is the whole reason each project page can be 100% itself.
+--------------------------------------------------------------------------- */
+
+:root {
+  --ground: #ffffff;
+  --ink: #111111;
+  --ink-soft: #767676;
+  --rule: #dddddd;
+  --blank: #f1f1f1;
+  --red: #F9423A;                  /* NewDara red — his, not the theme's */
+  --gutter: 3.2rem;
+  --lift: 8px;                     /* how far the offset rule sits up-right */
+
+  /* PLACEHOLDER. The face being cut for this site replaces this line and
+     nothing else. See the type brief in the Life OS project (portfolio/TYPE-BRIEF.md). */
+  --display: "Archivo Variable", Archivo, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --sans: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, sans-serif;
+}
+
+html { background: var(--ground); font-size: 62.5%; }
+body {
+  margin: 0;
+  color: var(--ink);
+  font: 400 1.7rem/1.5 var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+.wall { min-height: 100dvh; display: flex; flex-direction: column; padding: 0 var(--gutter); }
+@media (max-width: 600px) { :root { --gutter: 2rem; --lift: 5px; } }
+
+/* --- bar ------------------------------------------------------------------- */
+.bar {
+  display: flex; align-items: center; gap: 3.2rem;
+  padding: 2.8rem 0 0;
+}
+.bar-mark { display: block; color: var(--ink); line-height: 0; }
+.bar-mark svg { width: 2.6rem; height: auto; display: block; }
+.bar-mark:hover { color: var(--red); }
+.bar-nav { display: flex; gap: 2.8rem; margin-right: auto; }
+.bar-nav a, .bar-nav button {
+  appearance: none; background: none; border: 0; padding: 0; cursor: pointer;
+  color: var(--ink); text-decoration: none;
+  font: 600 1.6rem/1 var(--display); letter-spacing: .01em;
+  text-transform: uppercase;
+  border-bottom: .12em solid transparent;
+  padding-bottom: .2em;
+  transition: border-color .15s linear, color .15s linear;
+}
+.bar-nav a:hover, .bar-nav button:hover, .bar-nav [aria-expanded="true"] { border-bottom-color: var(--ink); }
+.bar-nav .is-current { color: var(--red); border-bottom-color: var(--red); }
+.bar-nav a:focus-visible, .bar-nav button:focus-visible, .tile-link:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
+.bar-loc {
+  font: 600 1.6rem/1 var(--display); color: var(--ink-soft);
+  text-transform: uppercase; letter-spacing: .08em;
+}
+
+/* --- about ----------------------------------------------------------------- */
+.about { padding: 3.6rem 0 0; max-width: 56ch; font-size: 1.9rem; line-height: 1.5; }
+.about p { margin: 0 0 1.2rem; }
+.about p:first-child { font-weight: 500; }
+
+/* --- title over the grid ----------------------------------------------------
+   The title is the NewDara wordmark, outlined. It is sized by WIDTH, not
+   font-size, because it is a drawing. --wm-ar is its aspect ratio (4036/862);
+   the grid's top padding is computed from the resulting height so the first
+   row of tiles still runs under the mark, as Miyazaki's title does. */
+.grid-wrap {
+  --wm-w: clamp(23rem, 56vw, 64rem);
+  --wm-ar: 4.681;
+  --wm-h: calc(var(--wm-w) / var(--wm-ar));
+  position: relative; flex: 1;
+  padding-top: calc(3.6rem + var(--wm-h) + 3.4rem + 1rem);
+}
+.site-title {
+  position: absolute; top: 3.6rem; left: 0; z-index: 2;
+  margin: 0; pointer-events: none;
+  display: flex; flex-direction: column; gap: 1.2rem;
+  width: var(--wm-w);
+}
+.site-wm { display: block; width: 100%; height: auto; color: var(--ink); }
+.site-name {
+  font: 500 1.3rem/1 var(--sans); text-transform: uppercase;
+  letter-spacing: .22em; color: var(--ink-soft);
+}
+
+/* --- the picture rail ------------------------------------------------------
+   The line the first row hangs from. Runs full bleed past the gutters, the
+   way a rail runs past the pictures on it. */
+.rail {
+  border-top: 1px solid var(--rule);
+  margin: 0 calc(-1 * var(--gutter)) 3.2rem;
+}
+
+/* --- masonry --------------------------------------------------------------- */
+.masonry { column-count: 1; column-gap: var(--gutter); }
+@media (min-width: 600px)  { .masonry { column-count: 2; } }
+@media (min-width: 1000px) { .masonry { column-count: 3; } }
+
+.tile-link { display: block; color: inherit; text-decoration: none; break-inside: avoid; }
+.tile { margin: 0 0 4.4rem; break-inside: avoid; isolation: isolate; }
+
+/* --- the frame -------------------------------------------------------------
+   White mat, ink rule, and a second rule sitting --lift up and to the right.
+   z-index:-1 puts the offset rule behind the mat's white ground but still in
+   front of the (transparent) tile, so only the part that sticks out shows —
+   exactly how the device reads in his own files. */
+.tile-frame {
+  position: relative;
+  background: var(--ground);
+  border: 1px solid var(--ink);
+  padding: 1rem;
+  transition: transform .18s ease;
+}
+.tile-frame::before {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  border: 1px solid var(--ink);
+  transform: translate(var(--lift), calc(-1 * var(--lift)));
+  transition: transform .18s ease;
+}
+.tile-link:hover .tile-frame { transform: translate(calc(var(--lift) / 2), calc(-1 * var(--lift) / 2)); }
+.tile-link:hover .tile-frame::before { transform: translate(0, 0); }
+
+.tile img, .tile-blank { display: block; width: 100%; background: var(--blank); }
+.tile-blank { aspect-ratio: 3 / 4; background: color-mix(in srgb, var(--accent) 10%, var(--blank)); }
+.tile-sketch[data-size="square"] .tile-blank { aspect-ratio: 1; }
+.tile-sketch[data-size="wide"]   .tile-blank { aspect-ratio: 4 / 3; }
+.tile-sketch .tile-frame { border-style: dashed; border-color: var(--ink-soft); }
+.tile-sketch .tile-frame::before { display: none; }
+
+/* --- the plaque -------------------------------------------------------------
+   A gallery label: number, title, medium and year. Always visible. */
+.tile-plaque {
+  display: grid; grid-template-columns: 3.6rem 1fr; align-items: start;
+  margin-top: 1.6rem; padding-top: .9rem;
+  border-top: 2px solid var(--ink);
+}
+.tile-n {
+  font: 600 1.2rem/1.35 var(--sans); color: var(--ink-soft);
+  letter-spacing: .08em; padding-top: .35rem;
+  font-variant-numeric: tabular-nums;
+}
+.tile-text { display: flex; flex-direction: column; gap: .3rem; }
+.tile-title { font: 700 2.2rem/1.05 var(--display); letter-spacing: -0.02em; color: var(--ink); }
+.tile-kind  { font: 500 1.2rem/1.4 var(--sans); color: var(--ink-soft); text-transform: uppercase; letter-spacing: .09em; }
+.tile-link:hover .tile-title { color: var(--red); }
+.tile-sketch .tile-plaque { border-top-color: var(--ink-soft); }
+.tile-sketch .tile-title { color: var(--ink-soft); }
+
+/* --- footer ---------------------------------------------------------------- */
+.foot {
+  display: flex; align-items: center; justify-content: space-between; gap: 2rem; flex-wrap: wrap;
+  padding: 3.6rem 0 5rem; border-top: 1px solid var(--rule);
+  font: 500 1.4rem/1 var(--sans); color: var(--ink-soft);
+  text-transform: uppercase; letter-spacing: .07em;
+}
+.foot-mark { line-height: 0; color: var(--ink-soft); }
+.foot-mark svg { width: 1.8rem; height: auto; display: block; }
+.foot a { color: inherit; text-decoration: none; }
+.foot a:hover { color: var(--ink); }
+
+/* --- shared "back" pill every project page renders -------------------------- */
+.back-to-wall {
+  position: fixed; left: 1.4rem; top: 1.4rem; z-index: 50;
+  background: var(--ink); color: #fff;
+  font: 600 1.4rem/1 var(--display); letter-spacing: .06em; text-transform: uppercase;
+  padding: .8rem 1.2rem; text-decoration: none;
+}
+.back-to-wall:hover { background: var(--red); }

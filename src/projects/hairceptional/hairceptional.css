@@ -1,0 +1,83 @@
+/* ---------------------------------------------------------------------------
+   Hairceptional page — the brand manual's own language.
+   Scoped under .hc. Values are the manual's own named colours (section 3):
+   Burgundy #812528, Chestnut Rose #D4554D, Fantasy #F9EEED, Casal #275B6B.
+   Fantasy is the ground because the manual's colour-dominance chart puts it
+   there: burgundy primary, rose accent, fantasy as the field, casal a sliver.
+--------------------------------------------------------------------------- */
+
+.hc {
+  --burgundy: #812528;
+  --rose:     #D4554D;
+  --fantasy:  #F9EEED;
+  --casal:    #275B6B;
+  --ink:      #2A1516;
+  --white:    #FFFFFF;
+
+  --display: "Poppins", "Now", system-ui, sans-serif;
+  --sans: "DM Sans Variable", "DM Sans", system-ui, sans-serif;
+
+  min-height: 100dvh;
+  background: var(--fantasy);
+  color: var(--burgundy);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+.hc h1, .hc h2, .hc h3 { margin: 0; font-family: var(--display); font-weight: 600; letter-spacing: -0.02em; line-height: 1.02; }
+.hc p { margin: 0; line-height: 1.6; }
+
+/* --- hero ------------------------------------------------------------------- */
+.hc-hero { padding: clamp(92px, 13vw, 148px) clamp(20px, 6vw, 88px) clamp(40px, 6vw, 72px); }
+.hc .hc-over { text-transform: uppercase; font-size: 11.5px; letter-spacing: .2em; color: var(--rose); margin-bottom: 24px; }
+.hc-hero h1 { font-size: clamp(42px, 8.5vw, 104px); max-width: 14ch; }
+.hc-hero h1 em { font-style: normal; color: var(--rose); }
+.hc .hc-lede { font-size: clamp(17px, 1.9vw, 21px); max-width: 56ch; margin-top: 26px; color: var(--ink); }
+.hc-facts { list-style: none; padding: 0; margin: 32px 0 0; display: grid; gap: 9px; font-size: 14px; max-width: 74ch; color: var(--ink); }
+.hc-facts b { display: inline-block; min-width: 86px; text-transform: uppercase; font-size: 10.5px; letter-spacing: .14em; color: var(--rose); }
+
+/* --- pull quote: the manual's own asides, which are the point --------------- */
+.hc-quote {
+  background: var(--burgundy); color: var(--fantasy);
+  padding: clamp(40px, 7vw, 84px) clamp(20px, 6vw, 88px);
+}
+.hc-quote-inner { max-width: 1180px; margin: 0 auto; }
+.hc-quote p {
+  font-family: var(--display); font-weight: 500;
+  font-size: clamp(24px, 4vw, 50px); line-height: 1.2; letter-spacing: -0.02em; max-width: 22ch;
+}
+.hc-quote small { display: block; margin-top: 20px; font-family: var(--sans); font-size: 13px; opacity: .75; letter-spacing: .04em; }
+
+/* --- sections ---------------------------------------------------------------- */
+.hc-section { padding: clamp(44px, 7vw, 96px) clamp(20px, 6vw, 88px); max-width: 1180px; margin: 0 auto; }
+.hc-inner { max-width: 1180px; margin: 0 auto; }
+.hc .hc-num { font-size: 12px; letter-spacing: .2em; color: var(--rose); margin-bottom: 10px; text-transform: uppercase; }
+.hc-section h2 { font-size: clamp(30px, 5vw, 58px); margin-bottom: 18px; }
+.hc .hc-body { font-size: 17px; max-width: 60ch; margin-bottom: 30px; color: var(--ink); }
+.hc-section-rose { max-width: none; background: var(--rose); color: var(--fantasy); }
+.hc-section-rose h2, .hc-section-rose .hc-num { color: var(--fantasy); }
+.hc-section-rose .hc-body { color: rgba(249,238,237,.9); }
+
+.hc-fig { margin: 0 0 22px; }
+.hc-fig img { display: block; width: 100%; height: auto; border-radius: 3px; }
+.hc .hc-fig figcaption { font-size: 13px; margin-top: 10px; color: var(--ink); opacity: .72; }
+.hc-pair { display: grid; gap: 20px; margin-bottom: 22px; }
+@media (min-width: 820px) { .hc-pair { grid-template-columns: 1fr 1fr; } }
+
+/* --- palette, live from the manual's own names and values ------------------- */
+.hc-swatches { list-style: none; padding: 0; margin: 0; display: grid; gap: 0; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+.hc-swatches li { aspect-ratio: 3 / 4; padding: 16px; display: flex; flex-direction: column; justify-content: flex-end; gap: 4px; }
+.hc-swatches b { font-family: var(--display); font-size: 17px; font-weight: 600; line-height: 1.15; }
+.hc-swatches code { font: 500 11.5px/1 ui-monospace, Menlo, monospace; opacity: .85; }
+/* the manual's dominance chart, redrawn as a live bar */
+.hc-dominance { display: flex; height: 62px; margin-top: 20px; }
+.hc-dominance span { display: block; }
+.hc-dom-label { display: flex; justify-content: space-between; font-size: 11.5px; margin-top: 8px; color: var(--ink); opacity: .7; }
+
+/* --- personality / tone lists ------------------------------------------------ */
+.hc-cols { display: grid; gap: 30px; }
+@media (min-width: 760px) { .hc-cols { grid-template-columns: 1fr 1fr; } }
+.hc-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; font-size: 17px; }
+.hc-list li::before { content: "— "; opacity: .5; }
+.hc-tone { font-family: var(--display); font-weight: 500; font-size: clamp(22px, 3vw, 34px); line-height: 1.25; }
+
+.hc-foot { padding: 44px 20px 76px; text-align: center; font-size: 13px; color: var(--ink); opacity: .7; }

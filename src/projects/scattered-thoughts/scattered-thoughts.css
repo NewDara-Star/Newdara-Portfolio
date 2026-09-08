@@ -1,0 +1,94 @@
+/* ---------------------------------------------------------------------------
+   Scattered Thoughts page — the podcast's own language.
+   Scoped under .st. The identity is a speech bubble that CONTAINS things, so
+   the page is built out of containers too: a light paper ground, black rules,
+   and one magenta that only ever appears on episode titles — exactly where it
+   appears in the identity itself.
+--------------------------------------------------------------------------- */
+
+.st {
+  --paper:  #EDEDED;
+  --white:  #FFFFFF;
+  --ink:    #111111;
+  --wine:   #962F4C;   /* episode-title magenta, sampled from the lockups */
+  --wine-l: #AC3556;
+  --grey:   #6E6E6E;
+
+  --display: "Archivo Variable", Archivo, system-ui, sans-serif;
+  --sans: "DM Sans Variable", "DM Sans", system-ui, sans-serif;
+
+  min-height: 100dvh;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+.st h1, .st h2, .st h3 { margin: 0; font-family: var(--display); font-weight: 700; letter-spacing: -0.025em; line-height: 1.02; }
+.st p { margin: 0; line-height: 1.6; }
+
+/* --- the mark ---------------------------------------------------------------
+   Not drawn in CSS. The bubble, the wordmark and the full lockup are the real
+   outlines from IDENTITY DIRECTION.ai, inlined in ./marks.tsx, so they take
+   currentColor and scale without loss. */
+.st-mark { display: block; height: auto; }
+.st-mark path[fill="#fff"] { fill: var(--paper); }
+
+/* The bubble used as a container on this page: the real frame, with content
+   placed inside it. That is exactly how the identity works. */
+.st-holder { position: relative; }
+.st-holder > .st-mark { width: 100%; color: var(--ink); }
+.st-holder > .st-holder-in {
+  position: absolute; inset: 4% 4% 24% 4%;
+  display: flex; flex-direction: column; justify-content: center; gap: 6px;
+  padding: 0 6%;
+}
+
+/* --- hero ------------------------------------------------------------------- */
+.st-hero { padding: clamp(88px, 12vw, 140px) clamp(20px, 6vw, 88px) clamp(48px, 7vw, 88px); }
+.st .st-over { text-transform: uppercase; font-size: 11.5px; letter-spacing: .2em; color: var(--wine); margin-bottom: 26px; }
+.st-wordmark { width: min(560px, 76vw); color: var(--ink); margin-bottom: 34px; }
+.st-hero h1 { font-size: clamp(34px, 5.5vw, 70px); max-width: 18ch; }
+.st-hero h1 em { font-style: normal; color: var(--wine); }
+.st .st-lede { font-size: clamp(17px, 1.9vw, 21px); max-width: 56ch; margin-top: 24px; color: #333; }
+.st-facts { list-style: none; padding: 0; margin: 32px 0 0; display: grid; gap: 9px; font-size: 14px; max-width: 74ch; color: #333; }
+.st-facts b { display: inline-block; min-width: 84px; text-transform: uppercase; font-size: 10.5px; letter-spacing: .14em; color: var(--wine); }
+
+/* --- sections ---------------------------------------------------------------- */
+.st-section { padding: clamp(44px, 7vw, 96px) clamp(20px, 6vw, 88px); max-width: 1180px; margin: 0 auto; border-top: 2px solid var(--ink); }
+.st-inner { max-width: 1180px; margin: 0 auto; }
+.st .st-num { font-size: 12px; letter-spacing: .2em; color: var(--wine); margin-bottom: 10px; text-transform: uppercase; }
+.st-section h2 { font-size: clamp(30px, 5vw, 56px); margin-bottom: 18px; }
+.st .st-body { font-size: 17px; max-width: 60ch; margin-bottom: 30px; color: #333; }
+.st-section-ink { max-width: none; background: var(--ink); color: var(--paper); }
+.st-section-ink h2 { color: var(--paper); }
+.st-section-ink .st-body { color: rgba(237,237,237,.82); }
+.st-section-ink .st-num { color: var(--wine-l); }
+
+.st-fig { margin: 0 0 22px; }
+.st-fig img { display: block; width: 100%; height: auto; }
+.st .st-fig figcaption { font-size: 13px; margin-top: 10px; color: var(--grey); }
+.st-pair { display: grid; gap: 20px; margin-bottom: 22px; }
+@media (min-width: 820px) { .st-pair { grid-template-columns: 1fr 1fr; } }
+
+/* --- episode strip ------------------------------------------------------------ */
+.st-eps { display: grid; gap: 18px; }
+.st-ep img { display: block; width: 100%; height: auto; background: var(--white); }
+.st-ep figcaption { font-family: var(--display); font-weight: 700; font-size: 17px; color: var(--wine); margin-top: 10px; }
+
+/* --- palette -------------------------------------------------------------------- */
+.st-swatches { list-style: none; padding: 0; margin: 0; display: grid; gap: 0; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); border: 2px solid var(--ink); }
+.st-swatches li { aspect-ratio: 1; padding: 14px; display: flex; flex-direction: column; justify-content: flex-end; gap: 3px; border-right: 2px solid var(--ink); }
+.st-swatches li:last-child { border-right: 0; }
+.st-swatches b { font-family: var(--display); font-size: 15px; font-weight: 700; }
+.st-swatches code { font: 500 11px/1 ui-monospace, Menlo, monospace; opacity: .8; }
+
+.st-foot-mark { width: 170px; margin: 0 auto 22px; color: var(--ink); }
+.st-foot { padding: 44px 20px 76px; text-align: center; font-size: 13px; color: var(--grey); border-top: 2px solid var(--ink); }
+
+/* --- naming --------------------------------------------------------------- */
+.st-names { list-style: none; padding: 0; margin: 0; display: grid; gap: 0; border-top: 2px solid var(--ink); }
+.st-names li { display: flex; align-items: baseline; gap: 14px; padding: 14px 0; border-bottom: 2px solid var(--ink); }
+.st-names b { font-family: var(--display); font-weight: 700; font-size: clamp(20px, 3vw, 30px); color: var(--wine); }
+.st-names span { font-size: 14px; color: var(--grey); margin-left: auto; }
+.st-names li[data-picked] b { color: var(--ink); }
+.st-names li[data-picked] span { color: var(--wine); font-weight: 600; }

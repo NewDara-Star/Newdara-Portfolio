@@ -1,0 +1,100 @@
+/* ---------------------------------------------------------------------------
+   Danfo page — the identity's own language.
+   Scoped under .df. Yellow is not an accent here, it is the ground: a danfo
+   is yellow with black stripes, and the identity is that livery. Tokens are
+   sampled from the project's own palette board.
+--------------------------------------------------------------------------- */
+
+.df {
+  --yellow:  #F9C700;   /* danfo yellow — the ground */
+  --bright:  #FFDE00;
+  --amber:   #FBB817;
+  --ink:     #000000;
+  --char:    #262626;
+  --white:   #FFFFFF;
+  --sky:     #19AFD8;
+  --red:     #ED321E;
+  --green:   #0AAF8E;
+  --font: "Jost Variable", Jost, Avenir, "Avenir Next", system-ui, sans-serif;
+
+  min-height: 100dvh;
+  background: var(--yellow);
+  color: var(--ink);
+  font-family: var(--font);
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+}
+.df h1, .df h2, .df h3 { margin: 0; font-weight: 600; letter-spacing: -0.01em; }
+.df p { margin: 0; line-height: 1.55; }
+.df code { font: 500 12px/1 ui-monospace, SFMono-Regular, Menlo, monospace; }
+
+/* --- the livery stripe -------------------------------------------------------
+   A danfo wears two black bands with a slanted break. Drawn, not photographed,
+   so it scales: two bars and a skewed gap. */
+.df-stripe { height: 26px; background: var(--ink); position: relative; overflow: hidden; }
+.df-stripe::after {
+  content: ""; position: absolute; inset: 0; left: 38%; width: 90px;
+  background: var(--yellow); transform: skewX(-24deg);
+}
+.df-stripe + .df-stripe { margin-top: 10px; }
+
+/* --- hero -------------------------------------------------------------------- */
+.df-hero { padding: clamp(96px, 14vw, 150px) clamp(20px, 6vw, 88px) 0; }
+.df .df-over {
+  text-transform: uppercase; font-size: 12px; font-weight: 600;
+  letter-spacing: .2em; margin-bottom: 20px;
+}
+.df-hero h1 {
+  font-size: clamp(46px, 10vw, 132px); line-height: .92; font-weight: 600;
+  letter-spacing: -0.035em; max-width: 13ch; text-transform: uppercase;
+}
+.df .df-lede { font-size: clamp(17px, 2vw, 23px); max-width: 54ch; margin-top: 28px; }
+.df-facts { list-style: none; padding: 0; margin: 32px 0 44px; display: grid; gap: 9px; font-size: 14.5px; max-width: 74ch; }
+.df-facts b {
+  display: inline-block; min-width: 92px; text-transform: uppercase;
+  font-size: 11px; font-weight: 600; letter-spacing: .13em;
+}
+.df-livery { padding: 0 0 clamp(40px, 7vw, 80px); }
+
+/* --- sections ------------------------------------------------------------------ */
+.df-section { padding: clamp(48px, 8vw, 104px) clamp(20px, 6vw, 88px); max-width: 1200px; margin: 0 auto; }
+.df-inner { max-width: 1200px; margin: 0 auto; }
+.df .df-num { font-size: 12px; font-weight: 600; letter-spacing: .2em; margin-bottom: 10px; }
+.df-section h2 {
+  font-size: clamp(30px, 5.5vw, 64px); text-transform: uppercase;
+  letter-spacing: -0.03em; margin-bottom: 20px;
+}
+.df .df-body { font-size: 17px; max-width: 60ch; margin-bottom: 34px; }
+
+.df-section-ink { max-width: none; background: var(--ink); color: var(--yellow); }
+.df-section-white { max-width: none; background: var(--white); }
+
+/* --- figures --------------------------------------------------------------------
+   Artboards are square and already yellow, so they sit on the page with no
+   frame at all — that is the point of a one-colour identity. */
+.df-fig { margin: 0 0 24px; }
+.df-fig img { display: block; width: 100%; height: auto; }
+.df .df-fig figcaption { font-size: 13px; margin-top: 10px; opacity: .75; }
+.df-section-ink .df-fig figcaption { color: var(--yellow); }
+.df-pair { display: grid; gap: 20px; margin-bottom: 24px; }
+@media (min-width: 800px) { .df-pair { grid-template-columns: 1fr 1fr; } }
+.df-trio { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+
+/* --- type tiers ------------------------------------------------------------------ */
+.df-tiers { display: grid; gap: 2px; background: var(--ink); border: 2px solid var(--ink); }
+.df-tier { background: var(--yellow); color: var(--ink); padding: 22px 24px; display: grid; gap: 6px; }
+.df-tier b { font-size: 12px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; }
+.df-tier span { font-size: clamp(24px, 4vw, 44px); font-weight: 600; letter-spacing: -0.02em; }
+.df-tier small { font-size: 13px; opacity: .75; }
+
+/* --- swatches --------------------------------------------------------------------- */
+.df-swatches { list-style: none; padding: 0; margin: 0; display: grid; gap: 0; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); border: 2px solid var(--ink); }
+.df-swatches li {
+  aspect-ratio: 3 / 5; padding: 12px; display: flex; flex-direction: column; justify-content: flex-end; gap: 3px;
+  border-right: 2px solid var(--ink);
+}
+.df-swatches li:last-child { border-right: 0; }
+.df-swatches b { font-size: 13px; font-weight: 600; }
+.df-swatches code { opacity: .85; }
+
+.df-foot { padding: 44px 20px 76px; text-align: center; font-size: 13px; }

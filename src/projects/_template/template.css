@@ -1,0 +1,11 @@
+/* Prefix EVERYTHING with .tp (pick your own two letters per project). */
+.tp {
+  --bg: #ffffff; --ink: #111111; --accent: #888888;
+  --display: system-ui, sans-serif; --sans: system-ui, sans-serif;
+  min-height: 100dvh; background: var(--bg); color: var(--ink); font-family: var(--sans);
+}
+.tp-hero { padding: 96px 24px 48px; max-width: 900px; margin: 0 auto; }
+.tp-kicker { text-transform: uppercase; letter-spacing: .12em; font-size: 12px; }
+.tp h1 { font-family: var(--display); font-size: clamp(40px, 8vw, 96px); margin: 8px 0 16px; }
+.tp-lede { font-size: 19px; max-width: 55ch; }
+.tp-section { padding: 48px 24px; max-width: 900px; margin: 0 auto; }

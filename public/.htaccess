@@ -1,0 +1,8 @@
+# Namecheap / Apache: send every path to index.html so /work/boredgame
+# works on a hard refresh. Vercel does the same via vercel.json.
+RewriteEngine On
+RewriteBase /
+RewriteRule ^index\.html$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.html [L]
