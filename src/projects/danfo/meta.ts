@@ -12,6 +12,7 @@ export const danfoMeta: ProjectMeta = {
   blurb: "An identity proposal for the Lagos danfo — the mark is the bus door.",
   cover,
   size: "square",
+  ratio: "1:1",
   status: "live",
   accent: "#F9C700",
 };

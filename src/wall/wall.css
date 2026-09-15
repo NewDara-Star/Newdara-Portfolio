@@ -21,14 +21,18 @@
 --------------------------------------------------------------------------- */
 
 :root {
-  --ground: #FFFEFF;                /* not pure white — a hair of magenta */
+  --ground: #EAEAE6;               /* warm off-white — paper, not screen white */
   --ink: #111111;
-  --ink-soft: #767676;
-  --rule: #dddddd;
-  --blank: #f1f1f1;
+  --ink-soft: #6C6C68;
+  --rule: #d5d5cf;
+  --blank: #e2e2dc;
   --red: #F9423A;                  /* NewDara red — his, not the theme's */
   --gutter: 3.2rem;
-  --lift: 8px;                     /* how far the offset rule sits up-right */
+  --radius: 24px;                  /* the card corner */
+  --radius-in: 14px;               /* the cover inside it */
+  --mat: 1.2rem;                   /* how much glass shows around the cover */
+  --glass: rgba(255, 255, 255, 0.58);
+  --bloom: 88%;                    /* how much accent is in a tile's bloom */
 
   /* PLACEHOLDER. The face being cut for this site replaces this line and
      nothing else. See the type brief in the Life OS project (portfolio/TYPE-BRIEF.md). */
@@ -155,72 +159,187 @@ body {
   margin: 0 calc(-1 * var(--gutter)) 3.2rem;
 }
 
+/* --- the filter ------------------------------------------------------------
+   A segmented control in the same glass and radius as the tiles. The white
+   pill is one element that slides; see Tabs.tsx for why it is measured rather
+   than styled per-tab. Tabs with nothing under them are never rendered. */
+.tabs {
+  position: relative; display: inline-flex; align-items: center;
+  margin: 0 0 3.2rem; padding: .4rem;
+  border-radius: 2.6rem;
+  background: rgba(255, 255, 255, .55);
+  -webkit-backdrop-filter: blur(18px) saturate(1.3);
+  backdrop-filter: blur(18px) saturate(1.3);
+  border: 1px solid rgba(17, 17, 17, .07);
+}
+.tabs-pill {
+  position: absolute; left: 0; top: .4rem; bottom: .4rem;
+  border-radius: 2.1rem; background: #fff;
+  border: 1px solid rgba(17, 17, 17, .06);
+  box-shadow: 0 1px 2px rgba(17, 17, 17, .05);
+  transition: transform .28s cubic-bezier(.2, .8, .2, 1),
+              width .28s cubic-bezier(.2, .8, .2, 1);
+}
+.tabs-tab {
+  position: relative; z-index: 1;
+  appearance: none; background: none; border: 0; cursor: pointer;
+  height: 4.2rem; padding: 0 2.2rem;
+  font: 600 1.4rem/1 var(--display);
+  text-transform: uppercase; letter-spacing: .06em;
+  color: var(--ink-soft);
+  transition: color .18s linear;
+}
+.tabs-tab:hover, .tabs-tab.is-active { color: var(--ink); }
+.tabs-tab:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; border-radius: 2.1rem; }
+@media (prefers-reduced-motion: reduce) { .tabs-pill { transition: none; } }
+
 /* --- masonry --------------------------------------------------------------- */
-.masonry { column-count: 1; column-gap: var(--gutter); }
-@media (min-width: 600px)  { .masonry { column-count: 2; } }
-@media (min-width: 1000px) { .masonry { column-count: 3; } }
+/* Three real columns, filled shortest-first by Wall.tsx. CSS multicol
+   balances by content flow, not by height, which left the last column half
+   empty with seven tiles. Explicit columns fix it and keep fixing it at
+   twenty. */
+.masonry { display: grid; grid-template-columns: 1fr; gap: 0 var(--gutter); }
+@media (min-width: 600px)  { .masonry { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 1000px) { .masonry { grid-template-columns: 1fr 1fr 1fr; } }
+.masonry-col { min-width: 0; }
 
-.tile-link { display: block; color: inherit; text-decoration: none; break-inside: avoid; }
-.tile { margin: 0 0 4.4rem; break-inside: avoid; isolation: isolate; }
+.tile-link { display: block; color: inherit; text-decoration: none; }
+.tile { position: relative; margin: 0 0 4.4rem; }
 
-/* --- the frame -------------------------------------------------------------
-   White mat, ink rule, and a second rule sitting --lift up and to the right.
-   z-index:-1 puts the offset rule behind the mat's white ground but still in
-   front of the (transparent) tile, so only the part that sticks out shows —
-   exactly how the device reads in his own files. */
-.tile-frame {
-  position: relative;
-  background: var(--ground);
-  border: 1px solid var(--ink);
-  padding: 1rem;
-  transition: transform .18s ease;
+/* The one colour the wall borrows from a project: its accent, bloomed behind
+   the glass so the card has something to frost against. Painted before
+   .tile-card in tree order, so it sits behind it without a negative z-index
+   (which backdrop-filter would swallow). */
+.tile::before {
+  content: ""; position: absolute; z-index: 0; pointer-events: none;
+  left: -20%; right: -20%; top: -10%; height: 112%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side,
+    color-mix(in srgb, var(--accent) var(--bloom), transparent) 12%, transparent 72%);
+  filter: blur(40px);
+  opacity: .8;
 }
-.tile-frame::before {
-  content: ""; position: absolute; inset: 0; z-index: -1;
-  border: 1px solid var(--ink);
-  transform: translate(var(--lift), calc(-1 * var(--lift)));
-  transition: transform .18s ease;
-}
-.tile-link:hover .tile-frame { transform: translate(calc(var(--lift) / 2), calc(-1 * var(--lift) / 2)); }
-.tile-link:hover .tile-frame::before { transform: translate(0, 0); }
+.tile-sketch::before { opacity: .45; }
 
-.tile img, .tile-blank { display: block; width: 100%; background: var(--blank); }
-.tile-blank { aspect-ratio: 3 / 4; background: color-mix(in srgb, var(--accent) 10%, var(--blank)); }
-.tile-sketch[data-size="square"] .tile-blank { aspect-ratio: 1; }
-.tile-sketch[data-size="wide"]   .tile-blank { aspect-ratio: 4 / 3; }
-.tile-sketch .tile-frame { border-style: dashed; border-color: var(--ink-soft); }
-.tile-sketch .tile-frame::before { display: none; }
+/* --- the card --------------------------------------------------------------
+   One rounded card per work: the cover full-bleed across the top, the plaque
+   in the panel beneath it. No ink rule and no offset projection — the frame
+   device is gone from the wall by decision (2026-09-15). It still lives in
+   his own files; it just isn't what hangs the work any more.
+
+   The card is glass: a translucent white over the ground, frosting whatever
+   is behind it, which is the tile's own accent bloom. That is the only colour
+   the wall borrows from a project. --bloom tunes how much. */
+.tile-card {
+  position: relative; z-index: 1;
+  padding: var(--mat);
+  border-radius: var(--radius);
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(22px) saturate(1.4);
+  backdrop-filter: blur(22px) saturate(1.4);
+  box-shadow:
+    0 1px 2px rgba(17, 17, 17, .05),
+    0 10px 28px rgba(17, 17, 17, .07);
+  transition: transform .22s cubic-bezier(.2, .7, .2, 1), box-shadow .22s linear;
+}
+.tile-link:hover .tile-card {
+  transform: translateY(-4px);
+  box-shadow:
+    0 2px 4px rgba(17, 17, 17, .06),
+    0 18px 44px rgba(17, 17, 17, .11);
+}
+
+/* --- the three canvases -----------------------------------------------------
+   Every cover is cropped to one of these. The source file's own shape is not
+   a design decision, so the wall does not inherit it. Portrait crops anchor to
+   the top, because a tall image is nearly always a screen and the top of a
+   screen is the part worth seeing. */
+.tile                     { --ar: 4 / 3; }
+.tile[data-ratio="3:4"]   { --ar: 3 / 4; }
+.tile[data-ratio="1:1"]   { --ar: 1; }
+.tile[data-ratio="4:3"]   { --ar: 4 / 3; }
+.tile[data-ratio="16:9"]  { --ar: 16 / 9; }
+
+.tile img, .tile-blank {
+  display: block; width: 100%;
+  aspect-ratio: var(--ar);
+  object-fit: cover;
+  border-radius: var(--radius-in);
+  background: var(--blank);
+}
+.tile[data-ratio="3:4"] img { object-position: 50% 0; }
+
+.tile-blank { background: color-mix(in srgb, var(--accent) 12%, var(--blank)); }
+.tile-sketch .tile-card { box-shadow: none; outline: 1px dashed var(--ink-soft); outline-offset: -1px; }
+.tile-sketch .tile-plaque { border-top-color: var(--ink-soft); }
 
 /* --- the plaque -------------------------------------------------------------
    A gallery label: number, title, medium and year. Always visible. */
+/* --- the plaque -------------------------------------------------------------
+   Back outside the card, on the ground, the way a gallery label sits on the
+   wall beside the frame rather than inside it. Number, title, medium, year. */
 .tile-plaque {
-  display: grid; grid-template-columns: 3.6rem 1fr; align-items: start;
+  display: grid; grid-template-columns: 3.4rem 1fr; align-items: start;
   margin-top: 1.6rem; padding-top: .9rem;
   border-top: 2px solid var(--ink);
 }
 .tile-n {
   font: 600 1.2rem/1.35 var(--sans); color: var(--ink-soft);
-  letter-spacing: .08em; padding-top: .35rem;
+  letter-spacing: .08em; padding-top: .55rem;
   font-variant-numeric: tabular-nums;
 }
 .tile-text { display: flex; flex-direction: column; gap: .3rem; }
 .tile-title { font: 700 2.2rem/1.05 var(--display); letter-spacing: -0.02em; color: var(--ink); }
 .tile-kind  { font: 500 1.2rem/1.4 var(--sans); color: var(--ink-soft); text-transform: uppercase; letter-spacing: .09em; }
 .tile-link:hover .tile-title { color: var(--red); }
-.tile-sketch .tile-plaque { border-top-color: var(--ink-soft); }
 .tile-sketch .tile-title { color: var(--ink-soft); }
 
-/* --- footer ---------------------------------------------------------------- */
+/* --- footer ----------------------------------------------------------------
+   The one dark thing on the site. It bleeds past the gutters and the whole of
+   it says one thing: write to him. The address is display type because it is
+   the only call to action the wall has. */
 .foot {
-  display: flex; align-items: center; justify-content: space-between; gap: 2rem; flex-wrap: wrap;
-  padding: 3.6rem 0 5rem; border-top: 1px solid var(--rule);
-  font: 500 1.4rem/1 var(--sans); color: var(--ink-soft);
-  text-transform: uppercase; letter-spacing: .07em;
+  margin: 9rem calc(-1 * var(--gutter)) 0;
+  padding: 6rem var(--gutter) 3.2rem;
+  background: var(--ink);
+  color: var(--ground);
+  display: grid; grid-template-columns: auto 1fr;
+  align-items: end; gap: 2.4rem 0;
 }
-.foot-mark { line-height: 0; color: var(--ink-soft); }
-.foot-mark svg { width: 1.8rem; height: auto; display: block; }
-.foot a { color: inherit; text-decoration: none; }
-.foot a:hover { color: var(--ink); }
+.foot-mark { grid-column: 1 / -1; line-height: 0; color: var(--ground); opacity: .8; }
+.foot-mark svg { width: 2.4rem; height: auto; display: block; }
+.foot-mark svg path { fill: currentColor; }
+
+.foot-mail {
+  grid-column: 1; display: flex; flex-direction: column;
+  color: var(--ground); text-decoration: none;
+  font: 800 clamp(3.4rem, 7.4vw, 8.6rem)/0.95 var(--display);
+  text-transform: uppercase; letter-spacing: -.035em;
+  transition: color .15s linear;
+}
+.foot-mail:hover { color: var(--red); }
+
+.foot-copy {
+  grid-column: 2; justify-self: start; align-self: end; margin: 0 0 1.2rem 2rem;
+  appearance: none; cursor: pointer;
+  background: rgba(255, 255, 255, .10); color: var(--ground);
+  border: 1px solid rgba(255, 255, 255, .22); border-radius: 2rem;
+  padding: .9rem 1.8rem;
+  font: 500 1.3rem/1 var(--sans); letter-spacing: .02em;
+  transition: background .15s linear;
+}
+.foot-copy:hover { background: rgba(255, 255, 255, .18); }
+.foot-copy:focus-visible { outline: 2px solid var(--ground); outline-offset: 3px; }
+
+.foot-end {
+  grid-column: 1 / -1;
+  display: flex; justify-content: space-between; gap: 2rem; flex-wrap: wrap;
+  margin-top: 6rem; padding-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, .16);
+  font: 500 1.2rem/1.4 var(--sans);
+  text-transform: uppercase; letter-spacing: .08em;
+  color: rgba(255, 255, 255, .55);
+}
 
 /* --- shared "back" pill every project page renders -------------------------- */
 .back-to-wall {

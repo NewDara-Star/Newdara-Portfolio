@@ -21,8 +21,11 @@
 // face being cut for this site lands. See the type brief in the Life OS
 // project (portfolio/TYPE-BRIEF.md).
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { wallProjects } from "../projects";
+import type { TileRatio, TileGroup } from "../projects/types";
+import { groupOf } from "../projects/types";
+import { Tabs } from "./Tabs";
 import { Tile } from "./Tile";
 import { Monogram } from "./mark";
 import { Masthead } from "./Masthead";
@@ -33,6 +36,14 @@ export function Wall() {
   const [about, setAbout] = useState(false);
   const [opened, setOpened] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const copy = useCallback(() => {
+    navigator.clipboard?.writeText("iamdamobi@gmail.com").then(
+      () => { setCopied(true); setTimeout(() => setCopied(false), 1800); },
+      () => {},
+    );
+  }, []);
 
   // The bar's monogram and the masthead are never both present: the monogram
   // is what stands in for the mark once the wordmark has scrolled away.
@@ -44,6 +55,49 @@ export function Wall() {
   }, []);
 
   const onDone = useCallback(() => setOpened(true), []);
+
+  // The filter. Four families exist on paper; only the ones with work hung
+  // under them get a tab, because a tab that opens onto an empty wall reads
+  // as broken. "Product" appears the day Avaia or Stride goes up.
+  const [tab, setTab] = useState<TileGroup | "all">("all");
+  const tabs = useMemo(() => {
+    const has = (g: TileGroup) => wallProjects.some((p) => groupOf(p.meta.kind) === g);
+    const all = [
+      { id: "all" as const, label: "All" },
+      { id: "brand" as const, label: "Brand" },
+      { id: "product" as const, label: "Product" },
+      { id: "play" as const, label: "Play" },
+    ];
+    return all.filter((t) => t.id === "all" || has(t.id));
+  }, []);
+
+  const shown = useMemo(
+    () => (tab === "all" ? wallProjects : wallProjects.filter((p) => groupOf(p.meta.kind) === tab)),
+    [tab],
+  );
+
+  // Three columns, filled shortest-first.
+  //
+  // CSS multicol balances by content FLOW, not by height, so with seven tiles
+  // the third column ended up half empty. Here each tile's height is known
+  // before it renders — it is its canvas ratio plus the plaque — so the wall
+  // can just hand each one to whichever column is currently shortest. Order is
+  // preserved well enough to read down the columns, and the plaque numbers
+  // carry the real order anyway.
+  const columns = useMemo(() => {
+    const H: Record<TileRatio, number> = {
+      "3:4": 4 / 3, "1:1": 1, "4:3": 3 / 4, "16:9": 9 / 16,
+    };
+    const PLAQUE = 0.21;                       // plaque height as a share of column width
+    const cols: (typeof wallProjects)[] = [[], [], []];
+    const h = [0, 0, 0];
+    for (const p of shown) {
+      const i = h.indexOf(Math.min(...h));
+      cols[i].push(p);
+      h[i] += H[p.meta.ratio ?? "4:3"] + PLAQUE;
+    }
+    return cols;
+  }, [shown]);
 
   return (
     <div className={"wall" + (opened ? " is-open" : "") + (scrolled ? " is-scrolled" : "")}>
@@ -79,9 +133,19 @@ export function Wall() {
             sits under it, because people hire the person, not the practice. */}
         <Masthead onDone={onDone} />
         <div className="rail" aria-hidden="true" />
+        <Tabs tabs={tabs} value={tab} onChange={setTab} />
         <div className="masonry" aria-label="Work">
-          {wallProjects.map((p, i) => (
-            <Tile key={p.meta.slug} meta={p.meta} hasPage={!!p.Page} n={i + 1} />
+          {columns.map((col, c) => (
+            <div className="masonry-col" key={c}>
+              {col.map((p) => (
+                <Tile
+                  key={p.meta.slug}
+                  meta={p.meta}
+                  hasPage={!!p.Page}
+                  n={wallProjects.indexOf(p) + 1}
+                />
+              ))}
+            </div>
           ))}
         </div>
       </main>
@@ -89,10 +153,22 @@ export function Wall() {
       {/* Paper over the wall until the mark has landed. */}
       <div className="veil" aria-hidden="true" />
 
+      {/* The footer is the one dark thing on the site, and the whole of it is
+          one instruction: write to him. The address is set as display type
+          because it is the only call to action the wall has. */}
       <footer className="foot">
         <span className="foot-mark"><Monogram /></span>
-        <span>© {new Date().getFullYear()} Daramola Olumide · NewDara</span>
-        <a href="mailto:iamdamobi@gmail.com">iamdamobi@gmail.com</a>
+        <a className="foot-mail" href="mailto:iamdamobi@gmail.com">
+          <span>iamdamobi</span>
+          <span>@gmail.com</span>
+        </a>
+        <button type="button" className="foot-copy" onClick={copy}>
+          {copied ? "Copied" : "Copy"}
+        </button>
+        <div className="foot-end">
+          <span>© {new Date().getFullYear()} Daramola Olumide · NewDara</span>
+          <span>V1 · Built in Dublin</span>
+        </div>
       </footer>
     </div>
   );

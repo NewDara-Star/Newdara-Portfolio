@@ -15,6 +15,7 @@ export const hairceptionalMeta: ProjectMeta = {
   blurb: "Identity and a 40-page brand manual for a custom-wig house.",
   cover,
   size: "wide",
+  ratio: "16:9",
   status: "live",
   accent: "#812528",
 };

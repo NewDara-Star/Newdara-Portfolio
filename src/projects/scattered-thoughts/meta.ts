@@ -13,6 +13,7 @@ export const scatteredthoughtsMeta: ProjectMeta = {
   blurb: "Identity system for my podcast — a mark that holds every episode.",
   cover,
   size: "square",
+  ratio: "1:1",
   status: "live",
   accent: "#962F4C",
 };

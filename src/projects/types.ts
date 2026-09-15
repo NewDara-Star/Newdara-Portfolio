@@ -13,6 +13,15 @@ import type { ComponentType } from "react";
  *  ratio; a sketch has no image, so this decides its shape. */
 export type TileSize = "tall" | "wide" | "square";
 
+/** The only three canvases a cover may be hung in. Every image is cropped to
+ *  one of them, so the wall has a rhythm instead of whatever shape the source
+ *  file happened to be. Portrait 4:3 is written 3:4. */
+export type TileRatio = "3:4" | "1:1" | "4:3" | "16:9";
+
+/** The four families the wall can be filtered by. Derived from `kind`, not
+ *  stored — a project's kind is the fact; the family is how the wall groups it. */
+export type TileGroup = "brand" | "product" | "play";
+
 export type ProjectKind =
   | "app"
   | "brand identity"
@@ -33,6 +42,8 @@ export interface ProjectMeta {
    *  the wall draws a quiet placeholder tile instead of a broken image. */
   cover?: string;
   size: TileSize;
+  /** Which of the three canvases this cover is hung in. Defaults to 4:3. */
+  ratio?: TileRatio;
   /** "live" = has a page. "sketch" = on the wall as intent only. */
   status: "live" | "sketch";
   /** Colour a sketch tile is tinted with, so it hints at the brand before the
@@ -45,4 +56,13 @@ export interface Project {
   /** The tailor-made page. Lazy-loaded so BoredGame's fonts and screenshots
    *  never ship to someone who only opened the Danfo page. */
   Page?: ComponentType;
+}
+
+/** Which tab a project falls under. Client identity work is "brand"; things he
+ *  designed AND shipped as software are "product"; everything made to be looked
+ *  at or played is "play". */
+export function groupOf(kind: ProjectKind): TileGroup {
+  if (kind === "brand identity") return "brand";
+  if (kind === "app" || kind === "product") return "product";
+  return "play";
 }

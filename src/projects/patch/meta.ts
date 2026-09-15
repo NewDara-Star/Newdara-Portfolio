@@ -12,6 +12,7 @@ export const patchMeta: ProjectMeta = {
   blurb: "Identity for a Lagos supply-chain company — logo, system, app, 37-page guide.",
   cover,
   size: "wide",
+  ratio: "16:9",
   status: "live",
   accent: "#1D43F5",
 };

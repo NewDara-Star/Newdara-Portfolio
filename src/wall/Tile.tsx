@@ -1,12 +1,21 @@
-// One work on the wall: a framed image and a numbered plaque under it.
+// One work on the wall: one rounded glass card holding the cover and, beneath
+// it, the numbered plaque.
 //
-// The frame is the point. It is drawn — a white mat with an ink rule, and a
-// second rule offset up and to the right — which is Daramola's own device,
-// the same one holding the Scattered Thoughts wordmark and boxing the NewDara
-// price list. On hover the offset closes: the frame settles onto the wall.
+// The ink rule offset up and to the right — the frame device that used to hang
+// every tile — was taken off the wall on 2026-09-15. It is still his, still in
+// his own files; it just isn't what the portfolio uses. Git history has it if
+// it ever comes back.
+//
+// Cover and plaque are in the SAME card, cover full-bleed to the card's top
+// corners, so the card clips it: that is why .tile-card has overflow:hidden
+// and the image carries no radius of its own.
+//
+// Every cover is cropped to one of three canvases (3:4, 1:1, 4:3, 16:9) so the
+// wall keeps a rhythm instead of inheriting whatever shape the source file was.
 //
 // The tile still knows nothing about the project's brand beyond the registry
-// card. Frames are neutral so the pictures in them don't have to be.
+// card — except its accent, which blooms behind the glass and is the only
+// colour the wall borrows from a project.
 
 import { Link } from "react-router-dom";
 import type { ProjectMeta } from "../projects/types";
@@ -15,9 +24,13 @@ export function Tile({ meta, hasPage, n }: { meta: ProjectMeta; hasPage: boolean
   const isSketch = meta.status === "sketch" || !meta.cover;
 
   const body = (
-    <figure className={"tile" + (isSketch ? " tile-sketch" : "")} data-size={meta.size}
-      style={{ ["--accent" as string]: meta.accent }}>
-      <div className="tile-frame">
+    <figure
+      className={"tile" + (isSketch ? " tile-sketch" : "")}
+      data-size={meta.size}
+      data-ratio={meta.ratio ?? "4:3"}
+      style={{ ["--accent" as string]: meta.accent }}
+    >
+      <div className="tile-card">
         {isSketch ? (
           <div className="tile-blank" aria-hidden="true" />
         ) : (

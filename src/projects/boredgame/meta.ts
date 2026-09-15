@@ -12,6 +12,7 @@ export const boredgameMeta: ProjectMeta = {
   blurb: "Ten short games for two people on two phones.",
   cover,
   size: "tall",
+  ratio: "3:4",
   status: "live",
   accent: "#FF2E88",
 };

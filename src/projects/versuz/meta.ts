@@ -12,6 +12,7 @@ export const versuzMeta: ProjectMeta = {
   blurb: "Brand and product for a Nigerian sports-prediction platform.",
   cover,
   size: "wide",
+  ratio: "4:3",
   status: "live",
   accent: "#BDFF05",
 };

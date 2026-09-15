@@ -11,6 +11,7 @@ export const hivesquareMeta: ProjectMeta = {
   blurb: "Naming and identity for a community marketplace in Lagos.",
   cover,
   size: "square",
+  ratio: "16:9",
   status: "live",
   accent: "#CE0941",
 };
