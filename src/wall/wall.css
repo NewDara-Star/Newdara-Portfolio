@@ -28,6 +28,7 @@
   --blank: #e2e2dc;
   --red: #F9423A;                  /* NewDara red — his, not the theme's */
   --gutter: 3.2rem;
+  --page: 118rem;                  /* the centred column the whole site sits in */
   --radius: 24px;                  /* the card corner */
   --radius-in: 14px;               /* the cover inside it */
   --mat: 1.2rem;                   /* how much glass shows around the cover */
@@ -48,45 +49,27 @@ body {
   font: 400 1.7rem/1.5 var(--sans);
   -webkit-font-smoothing: antialiased;
 }
-.wall { min-height: 100dvh; display: flex; flex-direction: column; padding: 0 var(--gutter); }
+/* The page is one centred column. .wall stays full width so the rail and the
+   footer can bleed past it; everything else lives inside --page. overflow-x is
+   CLIP, not hidden: clip does not create a scroll container, so the full-bleed
+   trick below cannot hand us a horizontal scrollbar. */
+.wall { min-height: 100dvh; display: flex; flex-direction: column; padding: 0 var(--gutter); overflow-x: clip; }
+
+/* Escape the centred column and run to both viewport edges. */
+.bleed { margin-inline: calc(50% - 50vw); width: 100vw; }
 @media (max-width: 600px) { :root { --gutter: 2rem; --lift: 5px; } }
 
-/* --- bar ------------------------------------------------------------------- */
-.bar {
-  display: flex; align-items: center; gap: 3.2rem;
-  padding: 2.8rem 0 0;
-  position: sticky; top: 0; z-index: 40; background: var(--ground);
+/* --- the bio ---------------------------------------------------------------
+   Always visible. It used to hide behind an "About" toggle in the bar; the bar
+   is gone and so is the toggle, because someone deciding whether to hire him
+   should not have to press a button to find out what he does. */
+.site-bio {
+  max-width: 54ch; margin: 0 auto;
+  text-align: center;
+  font-size: 1.9rem; line-height: 1.5;
 }
-.bar-mark {
-  display: block; color: var(--ink); line-height: 0;
-  opacity: 0; pointer-events: none; transform: translateY(-5px);
-  transition: opacity .2s linear, transform .2s cubic-bezier(.2,.7,.2,1);
-}
-.wall.is-scrolled .bar-mark { opacity: 1; pointer-events: auto; transform: translateY(0); }
-.bar-mark svg { width: 2.6rem; height: auto; display: block; }
-.bar-mark:hover { color: var(--red); }
-.bar-nav { display: flex; gap: 2.8rem; margin-right: auto; }
-.bar-nav a, .bar-nav button {
-  appearance: none; background: none; border: 0; padding: 0; cursor: pointer;
-  color: var(--ink); text-decoration: none;
-  font: 600 1.6rem/1 var(--display); letter-spacing: .01em;
-  text-transform: uppercase;
-  border-bottom: .12em solid transparent;
-  padding-bottom: .2em;
-  transition: border-color .15s linear, color .15s linear;
-}
-.bar-nav a:hover, .bar-nav button:hover, .bar-nav [aria-expanded="true"] { border-bottom-color: var(--ink); }
-.bar-nav .is-current { color: var(--red); border-bottom-color: var(--red); }
-.bar-nav a:focus-visible, .bar-nav button:focus-visible, .tile-link:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
-.bar-loc {
-  font: 600 1.6rem/1 var(--display); color: var(--ink-soft);
-  text-transform: uppercase; letter-spacing: .08em;
-}
-
-/* --- about ----------------------------------------------------------------- */
-.about { padding: 3.6rem 0 0; max-width: 56ch; font-size: 1.9rem; line-height: 1.5; }
-.about p { margin: 0 0 1.2rem; }
-.about p:first-child { font-weight: 500; }
+.site-bio p { margin: 0 0 1.2rem; }
+.site-bio p:first-child { font-weight: 500; }
 
 /* --- masthead + the opening -------------------------------------------------
    The mark is sized by WIDTH, not font-size, because it is a drawing.
@@ -98,18 +81,21 @@ body {
   --wm-ar: 4.681;
   --wm-h: calc(var(--wm-w) / var(--wm-ar));
   position: relative; flex: 1;
-  padding-top: calc(3.6rem + var(--wm-h) + 3.4rem + 1rem);
+  width: 100%; max-width: var(--page); margin: 0 auto;
+  padding-top: calc(4.8rem + var(--wm-h) + 2.8rem);
 }
+/* Centred, but still measured and animated from its top-left corner: the
+   opening transform in Masthead.tsx is computed against transform-origin
+   left top, so that origin must not change. left/right + auto margins centre
+   the box without touching transform. */
 .site-title {
-  position: absolute; top: 3.6rem; left: 0; z-index: 30;
-  margin: 0; pointer-events: none;
-  display: flex; flex-direction: column; gap: 1.2rem;
+  position: absolute; top: 4.8rem; left: 0; right: 0; z-index: 30;
+  margin: 0 auto; pointer-events: none;
+  display: flex; flex-direction: column; align-items: center;
   width: var(--wm-w);
   transform-origin: left top;
   will-change: transform;
 }
-/* Once scrolled the mark is gone and the bar's monogram stands in for it. */
-.wall.is-scrolled .site-title { opacity: 0; transition: opacity .18s linear; }
 
 /* font-size is set inline by Masthead.tsx: the target width divided by the
    mark's own width in slot-em, so the drawing always fills --wm-w exactly.
@@ -131,14 +117,6 @@ body {
 .slot[data-flipped] .slot-plain { transform: translateY(-105%); }
 .slot[data-flipped] .slot-glyph { transform: translateY(0); }
 
-.site-name {
-  font: 500 1.3rem/1 var(--sans); text-transform: uppercase;
-  letter-spacing: .22em; color: var(--ink-soft);
-  opacity: 0; transform: translateY(6px);
-  transition: opacity .3s linear, transform .3s cubic-bezier(.2,.7,.2,1);
-}
-.site-name.on { opacity: 1; transform: translateY(0); }
-
 /* Paper over the wall until the mark has landed. */
 .veil {
   position: fixed; inset: 0; z-index: 25; background: var(--ground);
@@ -147,7 +125,7 @@ body {
 .wall.is-open .veil { opacity: 0; }
 
 @media (prefers-reduced-motion: reduce) {
-  .slot-plain, .slot-glyph, .site-name, .veil, .site-title { transition: none; }
+  .slot-plain, .slot-glyph, .veil, .site-title { transition: none; }
   .veil { display: none; }
 }
 
@@ -156,7 +134,8 @@ body {
    way a rail runs past the pictures on it. */
 .rail {
   border-top: 1px solid var(--rule);
-  margin: 0 calc(-1 * var(--gutter)) 3.2rem;
+  margin-inline: calc(50% - 50vw); width: 100vw;
+  margin-bottom: 3.2rem;
 }
 
 /* --- the filter ------------------------------------------------------------
@@ -164,8 +143,8 @@ body {
    pill is one element that slides; see Tabs.tsx for why it is measured rather
    than styled per-tab. Tabs with nothing under them are never rendered. */
 .tabs {
-  position: relative; display: inline-flex; align-items: center;
-  margin: 0 0 3.2rem; padding: .4rem;
+  position: relative; display: flex; align-items: center;
+  width: max-content; margin: 0 auto 3.2rem; padding: .4rem;
   border-radius: 2.6rem;
   background: rgba(255, 255, 255, .55);
   -webkit-backdrop-filter: blur(18px) saturate(1.3);
@@ -299,10 +278,14 @@ body {
    it says one thing: write to him. The address is display type because it is
    the only call to action the wall has. */
 .foot {
-  margin: 9rem calc(-1 * var(--gutter)) 0;
+  margin-top: 9rem;
+  margin-inline: calc(50% - 50vw); width: 100vw;
   padding: 6rem var(--gutter) 3.2rem;
   background: var(--ink);
   color: var(--ground);
+}
+.foot-inner {
+  max-width: var(--page); margin: 0 auto;
   display: grid; grid-template-columns: auto 1fr;
   align-items: end; gap: 2.4rem 0;
 }

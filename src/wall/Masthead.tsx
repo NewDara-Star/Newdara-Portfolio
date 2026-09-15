@@ -6,8 +6,7 @@
 //   2. Each character SPLIT-FLAPS to its real face, left to right. The plain
 //      letter slides up and out of its slot as the outlined glyph slides up
 //      into it. No fade, no blur — a type change, drawn.
-//   3. The name fades up under it.
-//   4. The whole mark travels to its masthead position and the veil lifts.
+//   3. The whole mark travels to its masthead position and the veil lifts.
 //
 // It is ONE element the whole way. There is no clone and no second copy: the
 // real masthead simply starts life with a transform that puts it centre-screen
@@ -33,7 +32,6 @@ const TOTAL = totalEm(GLYPHS);   // the mark's width in slot-em
 export function Masthead({ onDone }: { onDone: () => void }) {
   const ref = useRef<HTMLHeadingElement>(null);
   const [flipped, setFlipped] = useState<number>(hasPlayed ? GLYPHS.length : 0);
-  const [named, setNamed] = useState(hasPlayed);
 
   // Place the mark centre-screen BEFORE first paint, so it never flashes in
   // the masthead slot first.
@@ -55,12 +53,11 @@ export function Masthead({ onDone }: { onDone: () => void }) {
     hasPlayed = true;
     const el = ref.current;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce || !el) { setFlipped(GLYPHS.length); setNamed(true); onDone(); return; }
+    if (reduce || !el) { setFlipped(GLYPHS.length); onDone(); return; }
 
     const timers: number[] = [];
     GLYPHS.forEach((_, i) =>
       timers.push(window.setTimeout(() => setFlipped(i + 1), HOLD + i * STEP)));
-    timers.push(window.setTimeout(() => setNamed(true), HOLD + GLYPHS.length * STEP + 160));
     timers.push(window.setTimeout(() => {
       el.style.transition = `transform ${FLY}ms cubic-bezier(.55,0,.15,1)`;
       el.style.transform = "none";
@@ -96,7 +93,6 @@ export function Masthead({ onDone }: { onDone: () => void }) {
           </span>
         ))}
       </span>
-      <span className={"site-name" + (named ? " on" : "")}>Daramola Olumide</span>
     </h1>
   );
 }

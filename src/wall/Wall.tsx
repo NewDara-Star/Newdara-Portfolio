@@ -1,27 +1,31 @@
 // THE WALL.
 //
-// Structure is Miyazaki's (Anders Norén) and stays that way: white ground,
-// thin bar, a site title that overlaps the grid, a masonry with the label
-// under the image. That structure is what lets fourteen unrelated brands hang
-// next to each other without fighting, so it is load-bearing.
+// Centred column, one screen wide at most: mark, a short bio, the filter, the
+// work, and a dark footer whose whole job is the email address. There is no
+// top bar — no nav, no location, no name under the mark. The tabs navigate and
+// the footer is the contact, so a bar would only repeat them.
+//
+// Miyazaki (Anders Norén) is still underneath it: a site title far larger than
+// anything else, a masonry with the label under the image, and a ground that
+// refuses to take any project's colour. That last part is load-bearing — it is
+// what lets fourteen unrelated brands hang next to each other without fighting.
 //
 // The voice is Daramola's:
 //   · the ND monogram, his own drawn mark (./mark.tsx)
 //   · the NewDara wordmark as the site title — seven faces, outlined, drawn
 //     from his own pick in the Wordmark Lab (./wordmark.tsx)
-//   · the frame device — a rule offset up and right — which is his, lifted
-//     from the Scattered Thoughts bubble and the NewDara price list
 //   · gallery labels: numbered plaques, not hover captions
 //   · a picture rail the work hangs from
+//   · the accent bloom behind each tile — the one colour the wall borrows
 //   · #F9423A is NOT borrowed from Miyazaki. He was already using that exact
 //     value in price listing.ai in 2021. Same hex, verified. It is his.
 //
 // The site title is now the wordmark, so the display face only sets the
-// chrome — nav, plaques, footer. Archivo remains a stand-in there until the
+// chrome — tabs, plaques, footer. Archivo remains a stand-in there until the
 // face being cut for this site lands. See the type brief in the Life OS
 // project (portfolio/TYPE-BRIEF.md).
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { wallProjects } from "../projects";
 import type { TileRatio, TileGroup } from "../projects/types";
 import { groupOf } from "../projects/types";
@@ -33,9 +37,7 @@ import "@fontsource-variable/archivo";
 import "./wall.css";
 
 export function Wall() {
-  const [about, setAbout] = useState(false);
   const [opened, setOpened] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const [copied, setCopied] = useState(false);
 
   const copy = useCallback(() => {
@@ -43,15 +45,6 @@ export function Wall() {
       () => { setCopied(true); setTimeout(() => setCopied(false), 1800); },
       () => {},
     );
-  }, []);
-
-  // The bar's monogram and the masthead are never both present: the monogram
-  // is what stands in for the mark once the wordmark has scrolled away.
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 90);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   const onDone = useCallback(() => setOpened(true), []);
@@ -100,38 +93,29 @@ export function Wall() {
   }, [shown]);
 
   return (
-    <div className={"wall" + (opened ? " is-open" : "") + (scrolled ? " is-scrolled" : "")}>
-      <header className="bar">
-        <a className="bar-mark" href="/" aria-label="NewDara — home" tabIndex={scrolled ? 0 : -1}>
-          <Monogram />
-        </a>
-        <nav className="bar-nav" aria-label="Site">
-          <a className="is-current" href="/">Work</a>
-          <button type="button" aria-expanded={about} aria-controls="about" onClick={() => setAbout((v) => !v)}>
-            About
-          </button>
-          <a href="mailto:iamdamobi@gmail.com">Contact</a>
-        </nav>
-        <span className="bar-loc">Dublin</span>
-      </header>
-
-      <section id="about" className="about" hidden={!about}>
-        <p>
-          Brand, product, games, artwork. I no get one discipline — I get one
-          standard.
-        </p>
-        <p>
-          Every frame on this wall opens into a page built in that project's
-          own language: its colours, its type, its rules. Not this site's. If a
-          page looks nothing like the one you're reading, that's the job done.
-        </p>
-      </section>
-
+    <div className={"wall" + (opened ? " is-open" : "")}>
       <main className="grid-wrap">
         {/* The mark and its opening. See Masthead.tsx — it starts centred
             and travels here. The practice name is the mark; the person's name
             sits under it, because people hire the person, not the practice. */}
         <Masthead onDone={onDone} />
+
+        {/* The bar is gone — no nav, no location, no name under the mark. The
+            tabs are the navigation now, and the footer is the contact. What
+            used to hide behind an "About" toggle is simply here, because a
+            person deciding whether to hire him should not have to press a
+            button to find out what he does. */}
+        <section className="site-bio">
+          <p>
+            Brand, product, games, artwork. I no get one discipline — I get one
+            standard.
+          </p>
+          <p>
+            Every frame on this wall opens into a page built in that project's
+            own language: its colours, its type, its rules. Not this site's. If a
+            page looks nothing like the one you're reading, that's the job done.
+          </p>
+        </section>
         <div className="rail" aria-hidden="true" />
         <Tabs tabs={tabs} value={tab} onChange={setTab} />
         <div className="masonry" aria-label="Work">
@@ -157,6 +141,7 @@ export function Wall() {
           one instruction: write to him. The address is set as display type
           because it is the only call to action the wall has. */}
       <footer className="foot">
+        <div className="foot-inner">
         <span className="foot-mark"><Monogram /></span>
         <a className="foot-mail" href="mailto:iamdamobi@gmail.com">
           <span>iamdamobi</span>
@@ -168,6 +153,7 @@ export function Wall() {
         <div className="foot-end">
           <span>© {new Date().getFullYear()} Daramola Olumide · NewDara</span>
           <span>V1 · Built in Dublin</span>
+        </div>
         </div>
       </footer>
     </div>
